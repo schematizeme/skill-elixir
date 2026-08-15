@@ -1,0 +1,79 @@
+# schematize-elixir — workflow de CI de referência (§13, §21, §22, §35).
+# Copie para .github/workflows/ci.yml e ajuste <projeto>/versões da sua stack.
+name: ci
+on:
+  pull_request:
+  push: { branches: [main] }
+
+env:
+  MIX_ENV: test
+
+jobs:
+  standards-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Gate de padrões (DoD/§37) no diff
+        run: bash .claude/skills/schematize-elixir/scripts/check-diff.sh "origin/${{ github.base_ref || 'main' }}"
+      - name: Índice de microfunções atualizado (§39)
+        run: |
+          node .claude/skills/schematize-elixir/scripts/build-index.mjs ./lib > /tmp/idx.md || true
+          # compara com o commitado; descomente quando o índice estiver versionado:
+          # diff -q /tmp/idx.md <projeto>_archive/index/INDEX_FUNCTIONS.md
+      - name: Scan de segredo no archive (§16.1/§32)
+        run: bash .claude/skills/schematize-elixir/scripts/archive-secret-scan.sh .
+
+  elixir-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
+      - name: Cache de deps + _build
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+      - name: Deps
+        run: mix deps.get --check-locked
+      - name: Formatação (§35)
+        run: mix format --check-formatted
+      - name: Deps não usadas / lock consistente
+        run: mix deps.unlock --check-unused
+      - name: Credo (linter — estrito, ofensa nova bloqueia)
+        run: mix credo --strict
+      - name: Compilar com warnings-as-errors
+        run: mix compile --warnings-as-errors
+      - name: Dialyzer (typespecs — domínio crítico)
+        run: mix dialyzer
+      - name: Testes (verde de verdade — §22)
+        run: mix test --cover
+      - name: Smoke self-check (anti verde-mentiroso — §22.3)
+        run: bash .claude/skills/schematize-elixir/scripts/smoke-selfcheck.sh --self-check
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
+      - name: Deps
+        run: mix deps.get
+      - name: Auditoria de deps Hex (retiradas/CVE — cadeia-suprimentos)
+        run: |
+          mix hex.audit
+          mix deps.audit || true   # requer :mix_audit; trava quando adotado
+      - name: Sobelow (AppSec estático de Phoenix)
+        run: mix sobelow --exit || true   # trava quando adotado no projeto
+      - name: Trivy fs
+        uses: aquasecurity/trivy-action@master
+        with: { scan-type: fs, severity: HIGH,CRITICAL, exit-code: '1' }
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2

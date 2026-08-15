@@ -1,0 +1,12 @@
+slug = "elixir"
+name = "schematize-elixir"
+tag = "Backend · Elixir"
+status = "beta"
+order = 8
+current_version = "0.1.0"
+href = "/elixir"
+
+[descriptions]
+pt = "Padrões normativos de engenharia para backends em Elixir — Phoenix/Ecto/OTP sobre a BEAM, realtime e alta concorrência tolerante a falha."
+en = "Normative engineering standards for Elixir backends — Phoenix/Ecto/OTP on the BEAM, realtime and fault-tolerant high concurrency."
+es = "Estándares normativos de ingeniería para backends en Elixir — Phoenix/Ecto/OTP sobre la BEAM, realtime y alta concurrencia tolerante a fallos."
