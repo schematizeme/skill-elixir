@@ -1,5 +1,19 @@
 # Changelog — schematize-elixir
 
+Todas as mudanças relevantes deste pacote, no formato [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/),
+com versionamento [SemVer](https://semver.org/lang/pt-BR/).
+
+## [0.3.0] — 2026-08-21
+Saneamento do catálogo conforme a vistoria de 2026-08-21.
+
+### Corrigido
+- **`String.to_atom!` não existe** — verificado rodando (`function String.to_atom!/1 is undefined`). O exemplo saiu da lista de bangs, e o item vizinho ganhou o que realmente importa: átomos **não são coletados pelo GC**, a tabela tem teto e, quando estoura, **a VM inteira morre, não a request** — incluindo `Jason.decode(..., keys: :atoms)`, que passa despercebido porque parece só uma opção de parsing.
+- **Joken como default de JWT** (`stack-versoes.md`, `seguranca.md`): o **Guardian está semiparado** desde 2022/23, e *lib de verificação de token parada é dívida de segurança com prazo*. Guardian fica como caminho de legado.
+
+### Mudado
+- `references/iam.md` ganhou o banner de ponteiro enumerando as **8 regras promovidas para a base**.
+- `anti-padroes.md`, `arquitetura.md` e `entrega.md` viraram ponteiro (poda mecânica dos blocos idênticos à base; os arquivos idiomáticos de OTP **não** foram podados — a medição deu <30% de bloco clonado).
+
 ## [0.2.0] — 2026-08-20
 Piso "efeito externo NUNCA sai de não-produção" no recorte Elixir/Phoenix (Swoosh).
 ### Adicionado
@@ -15,9 +29,6 @@ Piso "efeito externo NUNCA sai de não-produção" no recorte Elixir/Phoenix (Sw
 Correção da contradição do muro pré-login de IAM (alinha ao `iam.md` da schematize-engineering).
 ### Mudado
 - **/elixir-iam**: removido o "2º fator forte obrigatório antes do acesso pleno" e o "força 2º fator no 1º login" — o muro pré-login / deadlock de bootstrap VETADO pela norma. Agora senha+Email OTP = 2FA baseline; fator forte é nudge + step-up just-in-time.
-
-
-Formato: [Keep a Changelog]; versionamento: SemVer. Esta skill é a **especialização
 para Elixir** (Phoenix/Ecto/OTP sobre a BEAM) da base agnóstica `schematize-engineering`:
 os pisos são os mesmos de toda a casa; o que muda é o ferramental, o modelo de
 concorrência e o ecossistema. Frontend delega ao `schematize-web`; teste de segurança
