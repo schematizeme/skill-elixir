@@ -1,4 +1,4 @@
-# schematize-elixir — workflow de CI de referência (§13, §21, §22, §35).
+# schematize-elixir — workflow de CI de referência (§13, §21, a `schematize-qa`, §35).
 # Copie para .github/workflows/ci.yml e ajuste <projeto>/versões da sua stack.
 name: ci
 on:
@@ -17,10 +17,12 @@ jobs:
       - name: Gate de padrões (DoD/§37) no diff
         run: bash .claude/skills/schematize-elixir/scripts/check-diff.sh "origin/${{ github.base_ref || 'main' }}"
       - name: Índice de microfunções atualizado (§39)
-        run: |
-          node .claude/skills/schematize-elixir/scripts/build-index.mjs ./lib > /tmp/idx.md || true
-          # compara com o commitado; descomente quando o índice estiver versionado:
-          # diff -q /tmp/idx.md <projeto>_archive/index/INDEX_FUNCTIONS.md
+        env:
+          # Sem estes dois o gate NAO roda — e nao rodar REPROVA. Gate desarmado em silencio
+          # ("|| true" + diff comentado) foi o achado A5 da vistoria de 2026-08-21.
+          INDEX_SRC: ${{ vars.INDEX_SRC || './lib' }}
+          INDEX_FILE: ${{ vars.INDEX_FILE }}
+        run: bash .claude/skills/schematize-elixir/scripts/check-index.sh
       - name: Scan de segredo no archive (§16.1/§32)
         run: bash .claude/skills/schematize-elixir/scripts/archive-secret-scan.sh .
 
@@ -51,9 +53,9 @@ jobs:
         run: mix compile --warnings-as-errors
       - name: Dialyzer (typespecs — domínio crítico)
         run: mix dialyzer
-      - name: Testes (verde de verdade — §22)
+      - name: Testes (verde de verdade — a `schematize-qa`)
         run: mix test --cover
-      - name: Smoke self-check (anti verde-mentiroso — §22.3)
+      - name: Smoke self-check (anti verde-mentiroso — a `schematize-qa` (smoke e matriz simulated, `references/categorias.md` secoes 5 e 10))
         run: bash .claude/skills/schematize-elixir/scripts/smoke-selfcheck.sh --self-check
 
   security-scan:
@@ -68,10 +70,23 @@ jobs:
         run: mix deps.get
       - name: Auditoria de deps Hex (retiradas/CVE — cadeia-suprimentos)
         run: |
+          set -euo pipefail
           mix hex.audit
-          mix deps.audit || true   # requer :mix_audit; trava quando adotado
+          # `|| true` aqui tornava o "trava quando adotado" FALSO: o gate nunca travava, adotado
+          # ou nao (classe A5 da vistoria). Agora: se :mix_audit esta no mix.exs, o gate e DURO.
+          if grep -q ':mix_audit' mix.exs; then
+            mix deps.audit
+          else
+            echo "::warning::mix_audit nao adotado (mix.exs sem :mix_audit) — auditoria de deps NAO rodou"
+          fi
       - name: Sobelow (AppSec estático de Phoenix)
-        run: mix sobelow --exit || true   # trava quando adotado no projeto
+        run: |
+          set -euo pipefail
+          if grep -q ':sobelow' mix.exs; then
+            mix sobelow --exit
+          else
+            echo "::warning::sobelow nao adotado (mix.exs sem :sobelow) — AppSec estatico NAO rodou"
+          fi
       - name: Trivy fs
         uses: aquasecurity/trivy-action@master
         with: { scan-type: fs, severity: HIGH,CRITICAL, exit-code: '1' }

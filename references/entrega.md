@@ -1,6 +1,6 @@
 # Entrega: Templates, Flags, IA Assistida, DoD, Evolução e Índice
 
-> Parte da skill **schematize-elixir**. Continuação de `operacao.md` (numeração de seções **preservada**, §29+): templates, feature flags, uso de IA assistida, Definition of Done, evolução e índice de funcionalidades. Cross-refs por número de seção continuam válidos. Os pisos de tamanho/documentação vivem em `padroes-codigo.md`; os de teste em `testes.md`/`testes-execucao.md`; os anti-padrões vetados na `anti-padroes.md` (§37). Base agnóstica na **schematize-engineering**.
+> Parte da skill **schematize-elixir**. Continuação de `operacao.md` (numeração de seções **preservada**, §29+): templates, feature flags, uso de IA assistida, Definition of Done, evolução e índice de funcionalidades. Cross-refs por número de seção continuam válidos. Os pisos de tamanho/documentação vivem em `padroes-codigo.md`; os de teste em `testes.md`; os anti-padrões vetados na `anti-padroes.md` (§37). Base agnóstica na **schematize-engineering**.
 
 ---
 
@@ -26,7 +26,7 @@ README mínimo: o que é, como rodar (`mix setup`, `mix deps.get`), como testar 
 - `.formatter.exs` versionado (formatação é contrato, não gosto — §35).
 - `.credo.exs` versionado com o preset da casa (Credo reprova o build).
 - `mix.exs` com `dialyzer:` configurado (Dialyxir) e PLT cacheado no CI.
-- `mix aliases` que encapsulem o fluxo: `mix setup`, `mix ci`, `mix ecto.setup`, `mix ecto.reset`. O `make ci` (§23) apenas orquestra os aliases — a fonte da verdade é o `mix.exs`.
+- `mix aliases` que encapsulem o fluxo: `mix setup`, `mix ci`, `mix ecto.setup`, `mix ecto.reset`. O `make ci` (ver a `schematize-qa` (Makefile padrao, `references/execucao.md` secao 7)) apenas orquestra os aliases — a fonte da verdade é o `mix.exs`.
 - Se for Phoenix/API: `OpenApiSpex` ligado, spec derivada dos controllers e validada no CI (`make docs`).
 
 ---
@@ -96,8 +96,8 @@ Uma task está pronta quando, cumulativamente. Roda pelo gate `/elixir-review`:
 - [ ] **`mix format --check-formatted` limpo** — formatação é contrato
 - [ ] **Credo sem ofensa nova** (config `.credo.exs` versionada; `--strict` no domínio crítico)
 - [ ] **Dialyzer (Dialyxir) limpo no domínio crítico** — `@spec` nas funções públicas; PLT no CI
-- [ ] **Teste emulado por IA (`simulated`, §22.3) executado — 100% das rotas do inventário acessíveis pra quem deve e bloqueadas pra quem não deve; rota fantasma/morta = bloqueio**
-- [ ] **Pentest de entrada limpo: sem `500`, sem coerção de tipo, sem eco não-escapado, sem vazamento cross-tenant (§22.3, §22.8)**
+- [ ] **Teste emulado por IA (`simulated`, a `schematize-qa` (smoke e matriz simulated, `references/categorias.md` secoes 5 e 10)) executado — 100% das rotas do inventário acessíveis pra quem deve e bloqueadas pra quem não deve; rota fantasma/morta = bloqueio**
+- [ ] **Pentest de entrada limpo: sem `500`, sem coerção de tipo, sem eco não-escapado, sem vazamento cross-tenant (a `schematize-qa` (smoke e matriz simulated, `references/categorias.md` secoes 5 e 10), a `schematize-pentest`)**
 - [ ] `mix sobelow` / SAST + `mix deps.audit` (SCA) limpos
 - [ ] **Nenhum item da §37 (anti-padrões vetados) presente no diff**
 - [ ] **Arquivos ≤ 750 linhas (~500 úteis + ~250 de `@doc`/comentário); código útil > 300 linhas (~400 obs) flagueado e registrado como dívida (§6, padroes-codigo §1); toda função pública com `@doc` + `@spec` de contexto — o quê + de onde vem → pra onde vai (padroes-codigo §3)**
@@ -107,13 +107,15 @@ Uma task está pronta quando, cumulativamente. Roda pelo gate `/elixir-review`:
 - [ ] OpenAPI atualizada (se for API — `OpenApiSpex`, `make docs`)
 - [ ] **Migration Ecto reversível testada** — `mix ecto.migrate` e `mix ecto.rollback` verdes; `change` autorreversível ou par `up/down` explícito (se houver schema change)
 - [ ] Documentação atualizada (README, ADR, runbook se aplicável)
-- [ ] Smoke tests executados em staging **(com asserção de conteúdo e self-check anti verde-mentiroso — §22.3)**
+- [ ] Smoke tests executados em staging **(com asserção de conteúdo e self-check anti verde-mentiroso — a `schematize-qa` (smoke e matriz simulated, `references/categorias.md` secoes 5 e 10))**
 - [ ] CI verde, code review aprovado
 - [ ] **Archive de chat/task gerado e commitado (§28) — gate rígido, não opcional**
 - [ ] Feature flag configurada (se aplicável)
 - [ ] CODEOWNERS aplicável revisou
 
-> Os itens em negrito são **bloqueantes absolutos**: archive (§28), ausência de macaquice (§37), teste emulado por IA com rota 100% acessível (§22.3), pentest de entrada limpo (§22.8), migration reversível testada, e o quarteto de qualidade Elixir (`mix format --check-formatted`, Credo sem ofensa nova, Dialyzer limpo no crítico, `mix test` verde de verdade). Faltando qualquer um, a task **não está pronta** — independente de todo o resto estar verde. Smoke verde não basta: tem que ser smoke que **prova** conteúdo, não só status. Verde-mentiroso (teste que passa sem exercer o código) é falha, não aprovação.
+- [ ] **Nenhum efeito externo real fora de `prd` (se o projeto envia e-mail/SMS/push/webhook/cobrança):** provider default = **sink**, **guard deny-by-default dentro do provider** (com teste que **vê a recusa**), **cap por execução** válido em TODOS os ambientes, e endereços só no **domínio de teste em rota nula**. Normativa: `schematize-engineering` → `references/efeitos-externos.md`; recorte desta linguagem em `references/iam.md` §3.1; anti-padrão §37 *"Disparar efeito externo REAL a partir de não-produção"* (citado **por título**, porque a numeração do §37 diverge entre skills)
+
+> Os itens em negrito são **bloqueantes absolutos**: archive (§28), ausência de macaquice (§37), **nenhum efeito externo real fora de `prd`** (`schematize-engineering` → `references/efeitos-externos.md`), teste emulado por IA com rota 100% acessível (ver a `schematize-qa` (smoke e matriz simulated, `references/categorias.md` secoes 5 e 10)), pentest de entrada limpo (ver a `schematize-pentest`), migration reversível testada, e o quarteto de qualidade Elixir (`mix format --check-formatted`, Credo sem ofensa nova, Dialyzer limpo no crítico, `mix test` verde de verdade). Faltando qualquer um, a task **não está pronta** — independente de todo o resto estar verde. Smoke verde não basta: tem que ser smoke que **prova** conteúdo, não só status. Verde-mentiroso (teste que passa sem exercer o código) é falha, não aprovação.
 
 ---
 

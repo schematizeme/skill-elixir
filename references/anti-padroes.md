@@ -1,5 +1,16 @@
 # Filosofia, Aplicação Universal e Anti-Padrões Vetados
 
+> **CITE ESTES ITENS PELO TÍTULO, NUNCA PELO NÚMERO.** A numeração é **local desta skill** e
+> **diverge entre as irmãs**: o mesmo `§37 item 45` é *"authz hand-rolled"* aqui, *"bloquear o
+> scheduler da BEAM"* na `schematize-elixir` e *"dois serviços no mesmo user Linux"* na
+> `schematize-ruby`; o item 49 é *"efeito externo real fora de prd"* na base, não existe em três
+> skills e é *"ReleaseFast sem profiling"* na `schematize-zig`. Os máximos vão de 46 a 53. Um
+> ponteiro `§37 item N` cruzando skills aponta para outra coisa — e um dentro da própria skill
+> apodrece assim que alguém insere um item no meio (foi o que aconteceu com a citação a *"item 48"*
+> em `references/iam.md`, quando esta lista terminava no 46). **Forma correta:** §37, *"<título do
+> item>"*.
+
+
 > Parte da skill **schematize-elixir**. As referências cruzadas (§N) apontam para seções do corpo completo — todas presentes no conjunto de references desta skill. A base agnóstica destes pisos é a **schematize-engineering**; a segurança ofensiva/defensiva é a **schematize-pentest**.
 
 ## Índice
@@ -106,10 +117,10 @@ Prioridades, em ordem de desempate:
 ### CORS, headers e superfície
 
 12. **`Access-Control-Allow-Origin: *` em rota autenticada** (pior ainda com `allow-credentials`).
-    → Allowlist explícita de origens no `Corsica`/plug de CORS (§22.3 hardening).
+    → Allowlist explícita de origens no `Corsica`/plug de CORS (a `schematize-qa` (smoke e matriz simulated, `references/categorias.md` secoes 5 e 10) hardening).
 
 13. **Endpoint de debug/admin/dashboard sem auth, ou bind em `0.0.0.0`** — `LiveDashboard`, `/metrics`, console remoto exposto.
-    → Bind restrito, auth obrigatória; `LiveDashboard`/`/metrics` atrás de auth e 404 externo (§22.3).
+    → Bind restrito, auth obrigatória; `LiveDashboard`/`/metrics` atrás de auth e 404 externo (ver a `schematize-qa` (smoke e matriz simulated, `references/categorias.md` secoes 5 e 10)).
 
 14. **Mass assignment** — `cast/3` do Ecto com lista de campos frouxa (ou o mapa inteiro), deixando passar `is_admin`, `tenant_id`, `inserted_at`, `password_hash`.
     → `cast/3` com **allowlist explícita** de campos por changeset/endpoint; nunca `cast(struct, params, Map.keys(params))`.
@@ -131,7 +142,7 @@ Prioridades, em ordem de desempate:
     → Conserta o código, não silencia o teste.
 
 19. **Baixar o threshold de cobertura ou editar o gate** (`test_coverage`/`excoveralls`) pra o número fechar.
-    → Cobertura é contrato (§22). Sobe escrevendo teste, não mexendo na régua.
+    → Cobertura é contrato (ver a `schematize-qa`). Sobe escrevendo teste, não mexendo na régua.
 
 20. **Mockar o próprio sistema sob teste** retornando sucesso fixo, dando "verde" falso.
     → Testar comportamento real; mock só nas bordas externas, via **behaviour + Mox** (contrato explícito), nunca stub que finge o domínio.

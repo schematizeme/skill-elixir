@@ -1,6 +1,7 @@
+<!-- cross-skill: references/orquestracao.md -> schematize-engineering -->
 # Operação pelo ops — ambientes, instalação e correção (control plane)
 
-> O **`<projeto>_ops`** é a **interface única** de operação do sistema. Invariantes desta reference, todos **INEGOCIÁVEIS**: (1) nada chega ao servidor sem passar pelo **fluxo de promoção** (dev local → teste local → GitHub → hml → prd); (2) o ops provisiona num **workspace por aplicação** (`/<app>/`) e todo **redeploy é destrutivo na aplicação, semeado pelo `/<app>/.env` global** — mas **nunca destrói dados**; (3) cada serviço roda **isolado por usuário** (user Linux + systemd hardened); (4) **100%** de instalação/atualização/correção/config passa por uma **ferramenta do ops** — nunca à mão; (5) instalar é **paralelo por padrão** (= `nproc`), e falha no paralelo = **bug de independência** (prioridade máxima). Contexto do ops: `arquitetura.md` §2. Deploy/ambientes: `operacao.md` §21. Test kit: `testes.md` §22.1. **O artefato é a release OTP (`mix release`), montada no git — o ops NUNCA roda `mix` à mão em prd.**
+> O **`<projeto>_ops`** é a **interface única** de operação do sistema. Invariantes desta reference, todos **INEGOCIÁVEIS**: (1) nada chega ao servidor sem passar pelo **fluxo de promoção** (dev local → teste local → GitHub → hml → prd); (2) o ops provisiona num **workspace por aplicação** (`/<app>/`) e todo **redeploy é destrutivo na aplicação, semeado pelo `/<app>/.env` global** — mas **nunca destrói dados**; (3) cada serviço roda **isolado por usuário** (user Linux + systemd hardened); (4) **100%** de instalação/atualização/correção/config passa por uma **ferramenta do ops** — nunca à mão; (5) instalar é **paralelo por padrão** (= `nproc`), e falha no paralelo = **bug de independência** (prioridade máxima). Contexto do ops: `arquitetura.md` §2. Deploy/ambientes: `operacao.md` §21. Test kit: `testes.md` a `schematize-qa` (test kit, `references/execucao.md` secao 2). **O artefato é a release OTP (`mix release`), montada no git — o ops NUNCA roda `mix` à mão em prd.**
 
 ## 1. Ambientes e o fluxo de promoção (nada direto no servidor)
 
@@ -43,7 +44,7 @@ Cada serviço roda **confinado**, pra que um comprometimento não vaze para os o
 
 - **Proibido** `ssh servidor` + comando ad-hoc, editar arquivo no servidor, `mix`/`iex`/`bin/<app> rpc` na mão para operar, `systemctl`/`docker` solto, script avulso. Se **não existe** comando de ops pra aquilo, **cria o comando no ops** — não faz por fora. O que não está no ops não aconteceu (e não é reproduzível).
 - **Autonomia e completude (requisito, não meta):** o ops é uma **aplicação/CLI coesa, idempotente e autodescritiva** que instala e opera o sistema inteiro **sem depender da IA**. Um humano — o próprio usuário — provisiona um servidor **do zero** só com o ops. `ops install` sobe tudo (release + user + systemd + migration); `ops redeploy` recria do seed; `ops doctor` diagnostica tudo.
-- **Superfície mínima** (idempotentes, com `--help` e saída machine-readable): `bootstrap` (cria `/<app>/` e clona os repos) · `install`/`up` (instala a release, cria user/systemd) · `redeploy` (destrutivo, do seed §2) · `update` · `config` (renderiza do `/<app>/.env` → runtime.exs/env.sh) · `migrate` (`bin/<app> eval "<App>.Release.migrate()"`, reversível) · `health`/`doctor` (checa readiness, pool Ecto, árvore de supervisão) · `rollback` (volta à release anterior — `bin/<app> versions`) · `logs`/`troubleshoot` · `remote` (abre console gated auditado) · `reset` (destrói dados — gated, dev/hml) · `test` (§22.1).
+- **Superfície mínima** (idempotentes, com `--help` e saída machine-readable): `bootstrap` (cria `/<app>/` e clona os repos) · `install`/`up` (instala a release, cria user/systemd) · `redeploy` (destrutivo, do seed §2) · `update` · `config` (renderiza do `/<app>/.env` → runtime.exs/env.sh) · `migrate` (`bin/<app> eval "<App>.Release.migrate()"`, reversível) · `health`/`doctor` (checa readiness, pool Ecto, árvore de supervisão) · `rollback` (volta à release anterior — `bin/<app> versions`) · `logs`/`troubleshoot` · `remote` (abre console gated auditado) · `reset` (destrói dados — gated, dev/hml) · `test` (ver a `schematize-qa` (test kit, `references/execucao.md` secao 2)).
 - **Correção/hotfix é `ops update`/`ops redeploy`/`ops rollback`** — nunca mão no servidor (§1). O ops sobe com observabilidade integrada (`:telemetry`/LiveDashboard, §16) e **grava o archive** de cada operação (§28).
 
 ## 5. Instalação SEMPRE paralela (= nº de cores)
@@ -70,7 +71,7 @@ Se a instalação/subida **paralela falha** (race, porta/arquivo/lock disputado,
 | Config de runtime (`runtime.exs`), sem config compilada de ambiente | `operacao.md` §20 |
 | Concorrência/BEAM: supervisão, degradação graciosa, `:observer`/`:recon` | `references/concorrencia.md` |
 | Versões suportadas de Elixir/OTP/Phoenix e política de deps | `references/stack-versoes.md` |
-| Test kit do sistema vivo (roda pelo ops) | `testes.md` §22.1 |
+| Test kit do sistema vivo (roda pelo ops) | `testes.md` a `schematize-qa` (test kit, `references/execucao.md` secao 2) |
 | Observabilidade integrada do ops (`:telemetry`/LiveDashboard) | `observabilidade.md` §16 |
 | Independência de runtime / sem monólito distribuído | `CLAUDE.md` pisos 10 e 6 |
 | Segredo nunca versionado (o seed referencia o secret manager; cookie é segredo) | `seguranca.md` |

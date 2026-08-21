@@ -26,7 +26,7 @@ Verifique/scaffolde (`references/ops.md` §3):
 
 ## 2. O ops é a interface única (100%)
 Verifique/scaffolde a CLI do `<projeto>_ops` com comandos **idempotentes**, `--help` e saída machine-readable, cobrindo **todo** o ciclo sem depender da IA:
-`bootstrap` · `install`/`up` · `update` · `config` · `migrate` (reversível, via `Ecto.Migrator`/release task) · `health`/`doctor` · `rollback` · `logs`/`troubleshoot` · `test` (test kit §22.1).
+`bootstrap` · `install`/`up` · `update` · `config` · `migrate` (reversível, via `Ecto.Migrator`/release task) · `health`/`doctor` · `rollback` · `logs`/`troubleshoot` · `test` (test kit a `schematize-qa` (test kit, `references/execucao.md` secao 2)).
 - Se alguma operação de servidor **não** tem comando de ops, o gap é o achado: **crie o comando** — não faça por fora (`ssh` ad-hoc, editar arquivo, `docker`/`kubectl`, `remote_console` na mão são vetados).
 - Meta de completude: **`ops install` provisiona um servidor do zero** sozinho (compila/publica a `mix release` e sobe o systemd).
 

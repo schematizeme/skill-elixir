@@ -149,10 +149,10 @@ Projetos legados onde código já existe sem separação de camadas (ou um Phoen
 - Toda nova feature/refactor em código tocado segue o layout completo (`domain/`, `application/`, `infrastructure/`, `interface/` — ou os `lib/<app>/` correspondentes) — não introduzir mais lógica de negócio dentro de controller/schema/`GenServer` de borda.
 - Ao mover/quebrar módulo legado, organize já nas pastas DDD mesmo que internamente alguma função ainda misture responsabilidades (ex.: função de Context ainda montando `Ecto.Query` no meio da regra). Estrutura primeiro, inversão depois.
 - Cada PR que toca módulo híbrido **deve** mover ao menos um pedaço pra direção certa (ex.: extrair value object pra `domain/`, mover a query pra um módulo de repositório em `infrastructure/`).
-- ADR registrando o débito e o plano de remoção: `<project>/docs/adr/<n>-ddd-migration-<contexto>.md`.
+- ADR registrando o débito e o plano de remoção: `<projeto>/<projeto>_archive/decisoes/<n>-ddd-migration-<contexto>.md`.
 
 **SHOULD**
-- Manter teste de cobertura por camada (§22) durante a transição — domain começa com 0%, sobe a cada PR.
+- Manter teste de cobertura por camada (ver a `schematize-qa`) durante a transição — domain começa com 0%, sobe a cada PR.
 - Guard test (ex.: teste que varre `alias`/`import` com `Code`/regex, ou `boundary`/`mix xref`) que **rejeita dependências proibidas** logo que possível (mesmo com whitelist de exceções legadas):
   - `domain/` não faz `use Ecto.Schema`/`Phoenix.*`, nem `alias` de `Infrastructure.*`/`Application.*`/`Interface.*`.
   - `application/` não `alias`-eia `Interface.*`.

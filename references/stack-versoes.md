@@ -1,12 +1,17 @@
 # Stack e versões — Elixir, Erlang/OTP, Phoenix e política de deps
 
+> **Verificado em: 2026-08-21** — a estável corrente do Elixir é a **1.20.3** (04/08/2026;
+> conferida nas releases oficiais). A calibração antiga deste anexo (1.16/1.17/1.18) está **duas
+> linhas atrás**. O piso normativo continua sendo *"linha suportada, sem EOL"* — o número é
+> calibração, não trava.
+>
 > Parte da skill **schematize-elixir**. Define **quais versões** de Elixir, Erlang/OTP e Phoenix a casa suporta, a **matriz de compatibilidade**, como a versão é **fixada e reproduzível**, a **política de bump** e a **escolha de libs núcleo**. Toolchain/lints do dia a dia: `references/padroes-codigo.md`. Deploy da release: `operacao.md` §21. Concorrência/BEAM: `references/concorrencia.md`. Cadeia de suprimentos (SBOM, scan, pin): `references/cadeia-suprimentos.md`. Base agnóstica: `schematize-engineering`.
 
 ## 1. Piso de versões — linha suportada, sem EOL
 
 **Regra inegociável:** o projeto roda numa **linha estável ainda suportada** de Elixir e Erlang/OTP; **nada de versão EOL** (end-of-life), nem "presa numa antiga porque migrar dá trabalho". Ficar em EOL é dívida de segurança (§37) — vira prioridade de correção, não "depois".
 
-- **Elixir:** linha estável recente. Referência de calibração (2026): **1.16 / 1.17 / 1.18** aceitas; alvo preferido é a **penúltima ou última estável**. Abaixo da linha suportada → bump (§4).
+- **Elixir:** linha estável recente. Calibração **verificada em 2026-08-21**: corrente é a **1.20** (1.20.3); aceitas **1.18 / 1.19 / 1.20**; alvo preferido é a **penúltima ou última estável**. Abaixo da linha suportada → bump (§4).
 - **Erlang/OTP:** linha estável recente. Referência: **OTP 26 / 27**. OTP tem janela de suporte própria (as ~3 releases majors mais recentes recebem correção) — a casa acompanha e **não** roda OTP fora dessa janela.
 - **Phoenix:** **1.7.x** como piso quando há web; acompanhar minors estáveis. LiveView na linha correspondente suportada.
 - **Ecto:** **3.x** corrente.

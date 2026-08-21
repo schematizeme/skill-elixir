@@ -63,7 +63,7 @@ Digite `/elixir-help` dentro do Claude Code para ver a lista completa.
 ## Conteúdo da skill
 
 - `SKILL.md` — porta de entrada e pisos inegociáveis.
-- `references/` — corpo normativo fatiado por domínio (16 arquivos): `arquitetura.md`, `concorrencia.md`, `padroes-codigo.md`, `dados-eventos.md`, `seguranca.md`, `iam.md`, `cadeia-suprimentos.md`, `stack-versoes.md`, `testes.md`, `testes-execucao.md`, `observabilidade.md`, `operacao.md`, `ops.md`, `entrega.md`, `anti-padroes.md`, `contexto-claude-code.md`.
+- `references/` — corpo normativo fatiado por domínio (16 arquivos): `arquitetura.md`, `concorrencia.md`, `padroes-codigo.md`, `dados-eventos.md`, `seguranca.md`, `iam.md`, `cadeia-suprimentos.md`, `stack-versoes.md`, `testes.md`, `observabilidade.md`, `operacao.md`, `ops.md`, `entrega.md`, `anti-padroes.md`, `contexto-claude-code.md`.
 - `assets/` — templates (ADR/TASK/RUNBOOK/…), comandos, `CLAUDE.md`, CI, lint, hooks.
 - `scripts/` — andaime de testes, índice e gestão de contexto.
 - `skill.toml` — manifesto da skill (slug, nome, versão, descrições).
