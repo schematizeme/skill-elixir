@@ -24,10 +24,12 @@ Elixir roda **sobre** a BEAM: cada versão de Elixir declara a faixa de OTP com 
 
 | Elixir | Erlang/OTP compatível (faixa oficial) | Observação |
 |---|---|---|
-| 1.18 | OTP 25 – 27 (28 conforme release) | Alvo preferido corrente |
-| 1.17 | OTP 25 – 27 | Estável, suportada |
-| 1.16 | OTP 24 – 26 | Piso aceitável; planejar bump |
-| ≤ 1.15 | faixas antigas | **Evitar** — fora do alvo; migrar |
+| 1.20 | OTP 27 – 29 | Corrente (1.20.3); alvo preferido |
+| 1.19 | OTP 26 – 28 | Aceita; planejar bump p/ 1.20 |
+| 1.18 | OTP 25 – 27 | Aceita (piso); planejar bump |
+| ≤ 1.17 | faixas antigas | **Evitar** — fora do alvo; migrar |
+
+> Cruzando com as OTP aceitas pela casa (27 / 28 / 29): 1.18 só com OTP 27; 1.19 com 27 ou 28; 1.20 com 27, 28 ou 29. Faixas conferidas na tabela oficial de compatibilidade do Elixir em 2026-10-14.
 
 **Piso operacional:**
 - **Rodar sempre num par (Elixir, OTP) que a documentação oficial da versão de Elixir lista como suportado** — não improvisar combinação.
@@ -41,8 +43,8 @@ A versão da linguagem **não** é "a que estava na máquina". É **declarada, c
 - **`.tool-versions` commitado (asdf ou mise).** Fixa `elixir` e `erlang` (e `nodejs` se houver assets front). É a fonte da verdade do runtime local e do CI:
 
   ```
-  erlang 27.2
-  elixir 1.18.1-otp-27
+  erlang 28
+  elixir 1.20.3-otp-28
   ```
 
   O sufixo `-otp-NN` do Elixir **tem que casar** com o major de OTP declarado — precompilado errado é bug silencioso.
@@ -53,13 +55,13 @@ A versão da linguagem **não** é "a que estava na máquina". É **declarada, c
     [
       app: :my_app,
       version: "0.1.0",
-      elixir: "~> 1.18",
+      elixir: "~> 1.20",
       # ...
     ]
   end
   ```
 
-  `elixir: "~> 1.18"` faz o `mix` **recusar** compilar em versão abaixo do piso — trava explícita, não confiança.
+  `elixir: "~> 1.20"` faz o `mix` **recusar** compilar em versão abaixo do piso — trava explícita, não confiança.
 - **CI usa a mesma matriz** (ex.: `erlef/setup-beam` lendo `.tool-versions` ou pinado ao mesmo par) e falha se divergir. O par (Elixir, OTP) do CI é o mesmo que monta a release promovida (`operacao.md` §21).
 - **Lockfile `mix.lock` commitado, sempre** — reprodutibilidade de deps (`references/cadeia-suprimentos.md`). `mix deps.get` num commit dá **sempre** a mesma árvore.
 

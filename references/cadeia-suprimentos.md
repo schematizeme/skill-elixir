@@ -66,7 +66,7 @@
 
 **MUST**
 - **Multi-stage com `mix release`.** Estágio de build (imagem `hexpm/elixir:<ver>-erlang-<ver>-<os>` **pinada por digest**) compila e roda `MIX_ENV=prod mix release`; a imagem final carrega **só a release** (binário + ERTS + apps compiladas + shell scripts), sem Mix, sem Hex, sem toolchain, sem código-fonte. `mix release` com `include_erts: true` permite base runtime sem Erlang instalado.
-- **Base mínima e pinada por digest** (`@sha256:...`), não por tag móvel (`latest`/`1.16`). Alvo: **distroless** ou **alpine** para a imagem final; menos pacote, menos CVE. Com `include_erts: true`, dá para chegar a base bem enxuta (só libc/openssl). Atenção: musl (alpine) vs glibc — casar a base de build e de runtime para NIF não quebrar.
+- **Base mínima e pinada por digest** (`@sha256:...`), não por tag móvel (`latest`/`1.20`). Alvo: **distroless** ou **alpine** para a imagem final; menos pacote, menos CVE. Com `include_erts: true`, dá para chegar a base bem enxuta (só libc/openssl). Atenção: musl (alpine) vs glibc — casar a base de build e de runtime para NIF não quebrar.
 - **Não-root, filesystem read-only**, sem capabilities desnecessárias (liga com o piso de container do `ops`/segurança). A release roda como user dedicado (casa com o isolamento por usuário do `references/ops.md`).
 - ERTS e OpenSSL da imagem **pinados e escaneados** — CVE de OTP/OpenSSL é CVE seu.
 
@@ -74,7 +74,7 @@
 
 ```dockerfile
 # --- build ---
-FROM hexpm/elixir:1.16.2-erlang-26.2.5-debian-bookworm-20240513@sha256:<digest> AS build
+FROM hexpm/elixir:1.20.3-erlang-28.0-debian-bookworm-<data>@sha256:<digest> AS build
 ENV MIX_ENV=prod
 WORKDIR /app
 RUN mix local.hex --force && mix local.rebar --force

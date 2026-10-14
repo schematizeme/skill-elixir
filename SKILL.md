@@ -2,7 +2,8 @@
 name: schematize-elixir
 metadata:
   version: 0.4.2
-description: Padrões normativos de engenharia da casa no recorte Elixir/OTP (Phoenix, Ecto, Oban, BEAM) — arquitetura/DDD, supervisão e concorrência, segurança, IAM, testes/pentest, dados, observabilidade, deploy, archive. Use SEMPRE que for projetar, gerar, revisar ou refatorar backend, API, serviço, GenServer/supervisor, LiveView, schema, migration, infra, CI/CD, teste ou deploy em Elixir — mesmo sem citar "padrão" —, e ao escolher stack (Elixir entra por fit + ADR no rol Go/Rust/Elixir/C#/Zig/Ruby), modelar eventos/banco, desenhar auth, configurar observabilidade ou produzir ADR/runbook/archive. Pisos: segredo nunca no cliente; sem SQL por interpolação (Ecto parametrizado); erro nunca engolido; nada de GenServer como contador/cache global no caminho quente; auth server-side; IAM como app separada; efeito externo NUNCA sai de não-produção — adapter sink, guard deny-by-default, cap por execução, domínio de teste em rota nula; archive obrigatório. Frontend delega à schematize-web; pentest à schematize-pentest.
+description: >-
+  Padrões de engenharia da casa para Elixir/OTP: Phoenix, Ecto, Oban, LiveView, supervisão. Use ao projetar, gerar, revisar ou refatorar backend, API, GenServer/supervisor, schema, migration, CI/CD ou deploy em projeto com mix.exs/*.ex/*.exs, ou ao escolher Elixir no rol (fit + ADR). Mantém os pisos de segurança, IAM e archive da base.
 ---
 
 # Padrões de Engenharia da Casa — Elixir
@@ -17,7 +18,7 @@ A casa **não tem "a linguagem única"**; tem **um rol sancionado** e um **guia 
 
 - **Elixir entra por fit:** **realtime e alta concorrência tolerante a falha** (BEAM/OTP), sistemas distribuídos, messaging/streaming, presença/pub-sub, soft-realtime. Modelo de atores, let-it-crash + supervisão. É a escolha certa para gateways realtime, canais, fan-out de eventos, filas e pipelines.
 - **Node como serviço backend e PHP são LEGADO/fora do rol** — não recebem serviço novo; migram por funcionalidade do módulo (~30% afetado → extrai; ~50% extraído → migra o resto; ajuste pontual não porta).
-- **Frontend Node é 100% permitido** (Next.js principal; Astro) — só frontend, governado pela `schematize-web`. Aqui, Phoenix/LiveView cobrem **API/backend/channels**; a UI de produto delega ao `schematize-web`.
+- **Frontend Node é 100% permitido** (Next.js principal; Astro) — só frontend, governado pela `schematize-web`. **UI server-rendered em Phoenix (LiveView/HEEx/canais) é governada AQUI, por esta skill** (LiveView, estado do socket, auth, deploy), herdando da `schematize-web` apenas os pisos agnósticos de front: a11y WCAG 2.2 AA, Core Web Vitals, segurança de front (CSP, sem HTML não sanitizado, segredo só server-side) e SEO. Next/Astro continuam da `schematize-web`.
 - Detalhe e critérios em `references/arquitetura.md` (§3) e `references/stack-versoes.md`.
 
 ## Precedência e herança (leia antes de divergir)

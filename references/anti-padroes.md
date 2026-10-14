@@ -55,7 +55,7 @@ Versões concretas de Erlang/OTP, Elixir e libs ficam em **`references/stack-ver
    → Validação completa em toda request, `alg` fixado na allowlist (§14).
 
 10. **Hash de senha fraco** — MD5, SHA1 (`:crypto.hash`), sem salt, ou plaintext.
-    → **argon2id** (`argon2_elixir`) ou bcrypt cost ≥ 12 (§14).
+    → **argon2id-only** (`argon2_elixir`); bcrypt/PBKDF2 só legado a migrar no próximo login (§14).
 
 11. **`:rand`/`Enum.random`/`:erlang.now` pra token, id de sessão, código de reset, nonce** (PRNG não-cripto).
     → CSPRNG: `:crypto.strong_rand_bytes/1` (§14).

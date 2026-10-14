@@ -3,6 +3,18 @@
 Todas as mudanças relevantes deste pacote, no formato [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/),
 com versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.5.0] — 2026-10-14
+Saneamento transversal das skills de linguagem (coerência com a base e fatos verificados).
+
+### Corrigido
+- `description` reescrita (<=350, ancorada em mix.exs/Phoenix) em bloco `>-`.
+- Hash de senha: argon2id-only para senha nova; bcrypt/PBKDF2 só legado a migrar no próximo login, com ponteiro para `schematize-engineering → references/iam.md` (a skill aceitava alternativa fraca em SKILL.md/CLAUDE.md/anti-padrões).
+- CI: `trivy-action@master` pinado por SHA (v0.36.0), pois ref móvel em gate de segurança é supply chain aberta.
+- Matriz Elixir-OTP reescrita (1.18/1.19/1.20 x OTP 27-29; conferida na tabela oficial) e exemplos `.tool-versions`/`mix.exs`/Dockerfile atualizados: a matriz dizia 1.18 corrente/1.16 piso, contradizendo o próprio cabeçalho.
+- UI Phoenix/LiveView passa a ser governada por esta skill (herda da `schematize-web` só os pisos agnósticos: a11y AA, CWV, segurança de front, SEO), pois a web cobre Next/Astro.
+- `seguranca.md`: título não anuncia mais 'Frontend'.
+- 'Default pragmático (Go)' trocado por ponteiro para `schematize-engineering → references/linguagens.md`.
+
 ## [0.4.2] — 2026-09-30
 O piso de orquestração passa a ser **herdado** da base em vez de copiado à mão: uma mudança na engineering não exige mais editar 38 arquivos.
 

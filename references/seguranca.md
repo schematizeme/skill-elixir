@@ -1,4 +1,4 @@
-# Segurança, Auth, Multi-tenancy, LGPD e Frontend
+# Segurança, Auth, Multi-tenancy, LGPD e Segredos no Cliente
 
 > Parte da skill **schematize-elixir**. As referências cruzadas (§N) apontam para seções do corpo completo — todas presentes no conjunto de references desta skill. A base agnóstica vive na `schematize-engineering`; o teste adversarial vive na `schematize-pentest`.
 

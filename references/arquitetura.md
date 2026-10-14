@@ -48,7 +48,7 @@
 | **Zig** | `schematize-zig` | `_zig` |
 | **Ruby** | `schematize-ruby` | `_rb` |
 
-**Frontend — Node (e só frontend).** **Next.js** é a stack principal; **Astro** e outros frameworks consolidados são permitidos — governado por **schematize-web**. O server-side do próprio front (route handlers, server actions, BFF) faz parte do frontend e segue o §13.4/§38 (segredo só server-side). Isso vale **apenas** para frontend — **não** reabre Node como linguagem de serviço backend. A UI de um app Phoenix (LiveView/HEEx/canais como transporte de UI) é frontend e delega ao schematize-web; o Phoenix aqui é backend de API/canais/tempo-real.
+**Frontend — Node (e só frontend).** **Next.js** é a stack principal; **Astro** e outros frameworks consolidados são permitidos — governado por **schematize-web**. O server-side do próprio front (route handlers, server actions, BFF) faz parte do frontend e segue o §13.4/§38 (segredo só server-side). Isso vale **apenas** para frontend — **não** reabre Node como linguagem de serviço backend. **UI server-rendered em Phoenix (LiveView/HEEx/canais) é governada AQUI, por esta skill** (LiveView, estado do socket, auth, deploy), herdando da `schematize-web` apenas os pisos agnósticos de front: a11y WCAG 2.2 AA, Core Web Vitals, segurança de front (CSP, sem HTML não sanitizado, segredo só server-side) e SEO. Next/Astro continuam da `schematize-web`.
 
 **Fit do Elixir — quando esta é a linguagem certa (a decisão vira ADR §27):**
 
@@ -62,7 +62,7 @@
 
 - **Soft-realtime** — latência p99 previsível sob carga, graças ao escalonador justo e ao GC por processo (sem *stop-the-world* global).
 
-> Regra de fit: um gateway realtime/presença/streaming pede **Elixir**; um serviço de auth/cripto/parsing hostil pede Rust; um job de rede simples pede Go; um utilitário de sistema pede Zig; uma integração .NET pede C#; um script/protótipo pede Ruby. Se dois encaixam, escolha o **default pragmático** (Go) e registre o porquê no ADR. Elixir **não** é escolha por gosto: é escolha por concorrência/tolerância a falha/tempo-real.
+> Regra de fit: um gateway realtime/presença/streaming pede **Elixir**; um serviço de auth/cripto/parsing hostil pede Rust; um job de rede simples pede Go; um utilitário de sistema pede Zig; uma integração .NET pede C#; um script/protótipo pede Ruby. Se dois encaixam, siga o desempate de `schematize-engineering → references/linguagens.md` e registre o porquê no ADR. Elixir **não** é escolha por gosto: é escolha por concorrência/tolerância a falha/tempo-real.
 
 - Versão exata de Erlang/OTP e Elixir em uso fica em `references/stack-versoes.md`; `mix.exs` fixa `elixir:` e o `.tool-versions`/`mise` fixa OTP.
 
@@ -70,7 +70,7 @@
 
 - **Nova linguagem fora do rol** exige **ADR de exceção** aprovado — não se adota por preferência.
 
-- Escolha por **encaixe com o problema**, não por preferência. Elixir entra quando o fit acima manda; em empate técnico contra o default pragmático, registre o porquê no ADR.
+- Escolha por **encaixe com o problema**, não por preferência. Elixir entra quando o fit acima manda; em empate técnico siga o desempate de `schematize-engineering → references/linguagens.md` e registre o porquê no ADR.
 
 - Frameworks são bem-vindos; abstrações mágicas não. Critério: consigo entender o stack trace e a árvore de supervisão? Metaprogramação (`macro`) só quando remove boilerplate real — nunca como esperteza que esconde o fluxo.
 

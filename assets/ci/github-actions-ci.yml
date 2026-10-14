@@ -88,7 +88,7 @@ jobs:
             echo "::warning::sobelow nao adotado (mix.exs sem :sobelow) — AppSec estatico NAO rodou"
           fi
       - name: Trivy fs
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with: { scan-type: fs, severity: HIGH,CRITICAL, exit-code: '1' }
       - name: Gitleaks
         uses: gitleaks/gitleaks-action@v2
