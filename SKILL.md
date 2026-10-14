@@ -1,7 +1,7 @@
 ---
 name: schematize-elixir
 metadata:
-  version: 0.4.2
+  version: 0.5.0
 description: >-
   Padrões de engenharia para Elixir/OTP: Phoenix, Ecto, Oban, LiveView, supervisão. Use ao projetar, revisar ou
   refatorar backend, API, GenServer, migration ou CI/CD em projeto com mix.exs/*.ex/*.exs, ou ao escolher Elixir no
@@ -12,7 +12,7 @@ description: >-
 
 Conjunto normativo que rege como software de backend é projetado, construído, testado e operado aqui, **com Elixir sobre a BEAM/OTP** (Phoenix, Ecto, OTP). Mesma base normativa das demais skills da casa (`schematize-engineering` é a base agnóstica); o que muda é o ferramental, o modelo de concorrência e o ecossistema da linguagem — **nunca o piso**.
 
-**Versão:** skill `schematize-elixir` v0.4.2. Changelog em `CHANGELOG.md`.
+**Versão:** skill `schematize-elixir` v0.5.0. Changelog em `CHANGELOG.md`.
 
 ## Linguagem: Elixir no rol sancionado (por fit + ADR)
 
