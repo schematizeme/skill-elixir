@@ -7,6 +7,7 @@ com versionamento [SemVer](https://semver.org/lang/pt-BR/).
 Gates de script com vermelho plantado, bugs reais achados por eles corrigidos e IAM/Postgres/API apontando para as skills donas.
 
 ### Corrigido
+- `test-skeleton.test.sh`/`smoke-selfcheck.test.sh`: o `trap` de limpeza vira função com `p` local (fim do SC2154); scripts no piso de shell.
 - `scripts/archive-secret-scan.sh`: a regra de `password=` usava `[^ \n"']` — em ERE `\n` dentro de colchete é a letra `n`, então qualquer senha com `n` (quase todas) passava em branco. Agora `[^ "']`.
 - `scripts/check-diff.sh`: a regra de CORS `*` não pegava a forma canônica `Set("Access-Control-Allow-Origin", "*")` (faltava a vírgula na classe); base inexistente (`origin/main` ausente) virava "OK" por diff vazio — agora BLOQUEIA com mensagem.
 
