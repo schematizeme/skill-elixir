@@ -3,7 +3,7 @@ name = "schematize-elixir"
 tag = "Backend · Elixir"
 status = "beta"
 order = 8
-current_version = "0.5.0"
+current_version = "0.5.1"
 requires = ["engineering"]   # o piso vem da base; esta skill so especializa (SKILL.md, "Precedencia e heranca")
 href = "/elixir"
 
