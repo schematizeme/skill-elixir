@@ -14,6 +14,8 @@ Saneamento transversal das skills de linguagem (coerência com a base e fatos ve
 - UI Phoenix/LiveView passa a ser governada por esta skill (herda da `schematize-web` só os pisos agnósticos: a11y AA, CWV, segurança de front, SEO), pois a web cobre Next/Astro.
 - `seguranca.md`: título não anuncia mais 'Frontend'.
 - 'Default pragmático (Go)' trocado por ponteiro para `schematize-engineering → references/linguagens.md`.
+- **Description** reduzida (~270 chars) para caber no orçamento de listagem (soma das 31 skills ≤ 8500; o Claude Code corta a listagem acima disso).
+- **CI:** actions de terceiros pinadas por SHA completo com comentário `# vX.Y.Z` (mesma major em uso; supply chain), mesmo SHA em todas as skills.
 
 ## [0.4.2] — 2026-09-30
 O piso de orquestração passa a ser **herdado** da base em vez de copiado à mão: uma mudança na engineering não exige mais editar 38 arquivos.

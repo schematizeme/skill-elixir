@@ -3,7 +3,9 @@ name: schematize-elixir
 metadata:
   version: 0.4.2
 description: >-
-  Padrões de engenharia da casa para Elixir/OTP: Phoenix, Ecto, Oban, LiveView, supervisão. Use ao projetar, gerar, revisar ou refatorar backend, API, GenServer/supervisor, schema, migration, CI/CD ou deploy em projeto com mix.exs/*.ex/*.exs, ou ao escolher Elixir no rol (fit + ADR). Mantém os pisos de segurança, IAM e archive da base.
+  Padrões de engenharia para Elixir/OTP: Phoenix, Ecto, Oban, LiveView, supervisão. Use ao projetar, revisar ou
+  refatorar backend, API, GenServer, migration ou CI/CD em projeto com mix.exs/*.ex/*.exs, ou ao escolher Elixir no
+  rol (fit + ADR). Pisos de segurança, IAM e archive da base.
 ---
 
 # Padrões de Engenharia da Casa — Elixir
