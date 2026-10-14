@@ -3,6 +3,21 @@
 Todas as mudanças relevantes deste pacote, no formato [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/),
 com versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.6.0] — 2026-10-14
+Gates de script com vermelho plantado, bugs reais achados por eles corrigidos e IAM/Postgres/API apontando para as skills donas.
+
+### Corrigido
+- `scripts/archive-secret-scan.sh`: a regra de `password=` usava `[^ \n"']` — em ERE `\n` dentro de colchete é a letra `n`, então qualquer senha com `n` (quase todas) passava em branco. Agora `[^ "']`.
+- `scripts/check-diff.sh`: a regra de CORS `*` não pegava a forma canônica `Set("Access-Control-Allow-Origin", "*")` (faltava a vírgula na classe); base inexistente (`origin/main` ausente) virava "OK" por diff vazio — agora BLOQUEIA com mensagem.
+
+### Adicionado
+- Testes com vermelho e verde plantados (segredos falsos montados em tempo de execução, repos e servidores em `mktemp`): `archive-secret-scan.test.sh`, `check-diff.test.sh` (cada regra do piso + isenções + base inválida), `smoke-selfcheck.test.sh` (inclui o runner cego: `--self-check` tem que sair 1), `test-skeleton.test.sh`. O gate `check-skill` da skill-dev exigia (`script-sem-teste`); `lib.sh` fica isento.
+
+### Alterado
+- Description reduzida a ≤190 caracteres (orçamento do catálogo com 45 skills), mesmo território.
+- `references/iam.md`: topologia, fluxos, sessão, migração de legado e risco adaptativo viram piso curto + ponteiro `schematize-iam → references/*.md` (a skill dona); fica o recorte de linguagem (providers, guard de efeito externo, PEP, libs).
+- `references/dados-eventos.md`: migrations/pool/EXPLAIN apontam para `schematize-postgres → references/locks-e-migrations.md`, `pooling.md`, `explain-e-indices.md`; contrato, erros, idempotência, cursor e deprecação apontam para `schematize-api`. Fica o específico de Ecto (`Multi`, `changeset`, `up/down`) e Phoenix (`FallbackController`, `open_api_spex`, `hammer`).
+
 ## [0.5.1] — 2026-10-14
 Observabilidade deixa de duplicar a skill dona do tema.
 

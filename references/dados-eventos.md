@@ -88,13 +88,12 @@ def down do
 end
 ```
 
-- **Índice em tabela grande com `create index(..., concurrently: true)`** + `@disable_ddl_transaction true` e `@disable_migration_lock true`, para não travar escrita em produção.
-- **Migração de schema e migração de dado são migrations separadas.** Backfill pesado **não** vai na migration que roda no boot do deploy — vira **seed/tarefa idempotente** operada pelo `ops` (redeploy destrutivo semeia app, nunca dados — ver `references/ops.md`).
+- Índice em tabela grande: `create index(..., concurrently: true)` + `@disable_ddl_transaction true` e `@disable_migration_lock true`. Expand-contract, lock_timeout, backfill em lote e migração de dado separada da de schema: `schematize-postgres → references/locks-e-migrations.md` (backfill pesado nunca no boot do deploy; vira tarefa idempotente do `ops`, `references/ops.md`).
 
 **SHOULD — alta escala**
 - Réplica de leitura via segundo `Repo` (`MyApp.Repo.Replica`) quando o volume justificar; escrita sempre no primário.
 - Revisão de índice e `EXPLAIN (ANALYZE)` nos endpoints críticos; `telemetry` de `[:my_app, :repo, :query]` para achar query lenta (ver observabilidade).
-- Pool (`pool_size`) dimensionado e **menor** que `max_connections` do Postgres somado entre nós; particionamento para tabela de crescimento previsível.
+- `pool_size` menor que `max_connections` do Postgres somado entre nós (dimensionamento, PgBouncer e modo de pool: `schematize-postgres → references/pooling.md`); índice e `EXPLAIN`: `schematize-postgres → references/explain-e-indices.md`.
 
 ---
 
@@ -125,34 +124,13 @@ end
 **MUST**
 - API HTTP em **Phoenix** (endpoint + router + controller, JSON via `Jason`). GraphQL, quando o domínio pedir, via **Absinthe** — schema versionado, resolver fino, complexidade limitada.
 - **OpenAPI 3.1** como fonte da verdade em `/docs/openapi.yaml` (gerar com `open_api_spex`, que também valida o payload na borda pelo próprio spec).
-- Versionamento na URL: `/api/v1`, `/api/v2` (scope no router).
-- **Validação de payload na borda** — changeset/`open_api_spex`/`Ecto.Changeset` embedded antes de tocar o domínio. Nunca confiar no `params` cru.
-- Erro padrão via `FallbackController` + `ErrorJSON`, compatível com RFC 7807:
+- Validação de payload na borda (changeset embedded / `open_api_spex`) antes de tocar o domínio; nunca confiar no `params` cru.
+- Erro padrão via `FallbackController` + `ErrorJSON` no formato RFC 9457 (`problem+json`); `trace_id` em toda resposta de erro.
+- Escrita aceita `Idempotency-Key` e o implementa de fato (chave persistida + resposta memoizada; aceitar o header e ignorar é VETADO). Casa com o dedup de eventos (§9).
+- Contrato, versionamento/deprecação (`Deprecation`/`Sunset`), erros, idempotência, cursor pagination e limites: `schematize-api → references/contrato-rest.md`, `erros.md`, `idempotencia.md`, `paginacao-filtros.md`, `versionamento-deprecacao.md`, `limites-concorrencia.md`.
 
-```json
-{
-  "error": {
-    "code": "PRODUCT_NOT_FOUND",
-    "message": "Product not found",
-    "trace_id": "01HXYZ...",
-    "details": []
-  }
-}
-```
-
-- Escrita aceita `Idempotency-Key` **e o implementa de fato** (chave persistida + resposta memoizada; aceitar o header e ignorar é VETADO — §37). Casa com o dedup de eventos (§9).
-- Quebra de contrato → nova versão + deprecação ≥ 90 dias com headers `Deprecation` e `Sunset`.
-- Timestamps ISO-8601 com timezone explícito (`Z`).
-
-**MUST — paginação**
-- **Cursor pagination** é o padrão (cursor opaco sobre `id`/`inserted_at`).
-- Offset só em lista pequena (< 10k) e estática.
-- Resposta inclui `next_cursor` e `has_more`.
-
-**MUST — rate limiting**
-- Rate limiting **distribuído** (Redis via `hammer`/`ex_rated`, ou no gateway) — não só em ETS local, que não conta entre nós.
-- Chave por `user_id`, API key e `tenant_id`.
-- 429 com header `Retry-After`.
+**MUST — rate limiting (específico Phoenix)**
+- Rate limiting **distribuído** (Redis via `hammer`/`ex_rated`, ou no gateway) — não só em ETS local, que não conta entre nós. Chave por `user_id`, API key e `tenant_id`; 429 com `Retry-After`.
 
 **SHOULD**
 - Contratos consumer-driven (Pact) entre serviços.
